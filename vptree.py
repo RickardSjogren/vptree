@@ -183,7 +183,7 @@ class _AutoSortingList(list):
         Max queue size.
     """
 
-    def __init__(self, *args, max_size=None):
+    def __init__(self, max_size=None, *args):
         super(_AutoSortingList, self).__init__(*args)
         self.max_size = max_size
 
