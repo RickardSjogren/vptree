@@ -10,7 +10,7 @@ def readme():
 
 setup(
     name='vptree',
-    version='1.0',
+    version='1.0.2',
     author='Rickard Sjögren',
     author_email='r.sjogren89@gmail.com',
     license='MIT',
