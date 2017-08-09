@@ -22,7 +22,7 @@ class VPTree:
         Minimum number of points in leaves (IGNORED).
     """
 
-    def __init__(self, points, dist_fn, leaf_size=1):
+    def __init__(self, points, dist_fn):
         self.left = None
         self.right = None
         self.left_min = np.inf
