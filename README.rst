@@ -30,8 +30,7 @@ Example usage:
   points = np.random.randn(20000, 10)
   query = [.5] * 10
   
-  # Build tree in O(n log n) time complexity, optionally specify minimum
-  # leaf size passing 'leaf_size'  key word.
+  # Build tree in O(n log n) time complexity.
   tree = vptree.VPTree(points, euclidean)   
   
   # Query single point.
