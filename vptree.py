@@ -34,7 +34,7 @@ class VPTree:
         if not len(points):
             raise ValueError('Points can not be empty.')
 
-        # vantage point is point furthest from parent vp
+        # Vantage point is point furthest from parent vp.
         vp_i = 0
         self.vp = points[vp_i]
         points = np.delete(points, vp_i, axis=0)
@@ -108,36 +108,35 @@ class VPTree:
         neighbors = _AutoSortingList(max_size=n_neighbors)
         nodes_to_visit = [(self, 0)]
 
-        furthest_distance = np.inf
+        furthest_d = np.inf
 
         while len(nodes_to_visit) > 0:
             node, d0 = nodes_to_visit.pop(0)
-            if node is None or d0 > furthest_distance:
+            if node is None or d0 > furthest_d:
                 continue
 
             d = self.dist_fn(query, node.vp)
-            if d < furthest_distance:
+            if d < furthest_d:
                 neighbors.append((d, node.vp))
-                furthest_distance, _ = neighbors[-1]
+                furthest_d, _ = neighbors[-1]
 
             if node._is_leaf():
                 continue
 
-            if (d >= node.left_min and d <= node.left_max):
+            if node.left_min <= d <= node.left_max:
                 nodes_to_visit.insert(0, (node.left, 0))
-            elif (d >= node.left_min - furthest_distance and
-                  d <= node.left_max + furthest_distance):
+            elif node.left_min - furthest_d <= d <= node.left_max + furthest_d:
                 nodes_to_visit.append((node.left,
                                        node.left_min - d if d < node.left_min
                                        else d - node.left_max))
-            if (d >= node.right_min and d <= node.right_max):
+
+            if node.right_min <= d <= node.right_max:
                 nodes_to_visit.insert(0, (node.right, 0))
-            elif (d >= node.right_min - furthest_distance and
-                  d <= node.right_max + furthest_distance):
+            elif node.right_min - furthest_d <= d <= node.right_max + furthest_d:
                 nodes_to_visit.append((node.right,
                                        node.right_min - d if d < node.right_min
                                        else d - node.right_max))
-                    
+
         return list(neighbors)
 
     def get_all_in_range(self, query, max_distance):
@@ -174,17 +173,16 @@ class VPTree:
             if node._is_leaf():
                 continue
 
-            if (d >= node.left_min and d <= node.left_max):
+            if node.left_min <= d <= node.left_max:
                 nodes_to_visit.insert(0, (node.left, 0))
-            elif (d >= node.left_min - max_distance and
-                  d <= node.left_max + max_distance):
+            elif node.left_min - max_distance <= d <= node.left_max + max_distance:
                 nodes_to_visit.append((node.left,
                                        node.left_min - d if d < node.left_min
                                        else d - node.left_max))
-            if (d >= node.right_min and d <= node.right_max):
+
+            if node.right_min <= d <= node.right_max:
                 nodes_to_visit.insert(0, (node.right, 0))
-            elif (d >= node.right_min - max_distance and
-                  d <= node.right_max + max_distance):
+            elif node.right_min - max_distance <= d <= node.right_max + max_distance:
                 nodes_to_visit.append((node.right,
                                        node.right_min - d if d < node.right_min
                                        else d - node.right_max))
