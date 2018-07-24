@@ -118,27 +118,24 @@ class VPTree:
             d = self.dist_fn(query, node.vp)
             if d < furthest_d:
                 neighbors.append((d, node.vp))
-                if len(neighbors) == n_neighbors:
-                    furthest_d, _ = neighbors[-1]
+                furthest_d, _ = neighbors[-1]
 
             if node._is_leaf():
                 continue
 
-            middle = 0.5 * (node.left_max + node.right_min)
-            if d < middle: 
-                if node.left_min - furthest_d <= d <= node.left_max + furthest_d:
-                    d = self.dist_fn(query, node.left.vp)
-                    nodes_to_visit.append((node.left, d))
-                if node.right_min - furthest_d <= d <= node.right_max + furthest_d:
-                    d = self.dist_fn(query, node.right.vp)
-                    nodes_to_visit.append((node.right, d))
-            else:
-                if node.right_min - furthest_d <= d <= node.right_max + furthest_d:
-                    d = self.dist_fn(query, node.right.vp)
-                    nodes_to_visit.append((node.right, d))
-                if node.left_min - furthest_d <= d <= node.left_max + furthest_d:
-                    d = self.dist_fn(query, node.left.vp)
-                    nodes_to_visit.append((node.left, d))
+            if node.left_min <= d <= node.left_max:
+                nodes_to_visit.insert(0, (node.left, 0))
+            elif node.left_min - furthest_d <= d <= node.left_max + furthest_d:
+                nodes_to_visit.append((node.left,
+                                       node.left_min - d if d < node.left_min
+                                       else d - node.left_max))
+
+            if node.right_min <= d <= node.right_max:
+                nodes_to_visit.insert(0, (node.right, 0))
+            elif node.right_min - furthest_d <= d <= node.right_max + furthest_d:
+                nodes_to_visit.append((node.right,
+                                       node.right_min - d if d < node.right_min
+                                       else d - node.right_max))
 
         return list(neighbors)
 
