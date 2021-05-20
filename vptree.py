@@ -1,5 +1,6 @@
 """ This module contains an implementation of a Vantage Point-tree (VP-tree)."""
 import numpy as np
+import statistics
 
 
 class VPTree:
@@ -44,7 +45,7 @@ class VPTree:
 
         # Choose division boundary at median of distances.
         distances = [self.dist_fn(self.vp, p) for p in points]
-        median = np.median(distances)
+        median = statistics.mean(distance)
 
         left_points = []
         right_points = []
