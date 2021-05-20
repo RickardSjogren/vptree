@@ -39,14 +39,14 @@ class VPTree:
         # Vantage point is point furthest from parent vp.
         vp_i = 0
         self.vp = points[vp_i]
-        points = np.delete(points, vp_i, axis=0)
+        del points[vp_i]
 
         if len(points) == 0:
             return
 
         # Choose division boundary at median of distances.
         distances = [self.dist_fn(self.vp, p) for p in points]
-        median = statistics.mean(distance)
+        median = statistics.mean(distances)
 
         left_points = []
         right_points = []
