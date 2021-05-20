@@ -38,7 +38,7 @@ class VPTree:
         # Vantage point is point furthest from parent vp.
         vp_i = 0
         self.vp = points[vp_i]
-        del points[vp_i]
+        points = points[1:]
 
         if len(points) == 0:
             return
