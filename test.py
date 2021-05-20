@@ -1,6 +1,13 @@
 import unittest
 import vptree
-import numpy as np
+
+import importlib
+
+
+try:
+    np = importlib.import_module("numpy")
+except ModuleNotFoundError:
+    raise RuntimeError("You should install NumPy to perform tests")
 
 
 class TestVPTree(unittest.TestCase):

@@ -8,6 +8,7 @@ def readme():
         contents = f.read()
     return contents
 
+
 setup(
     name='vptree',
     version='1.1.1',
@@ -21,9 +22,6 @@ setup(
     py_modules=['vptree'],
     test_suite='test',
     keywords='python machine learning search',
-    install_requires=[
-        'numpy',
-    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',

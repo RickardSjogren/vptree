@@ -1,5 +1,4 @@
 """ This module contains an implementation of a Vantage Point-tree (VP-tree)."""
-import numpy as np
 import statistics
 import math
 
@@ -221,4 +220,3 @@ class _AutoSortingList(list):
         self.sort(key=lambda x: x[0])
         if self.max_size is not None and len(self) > self.max_size:
             self.pop()
-
