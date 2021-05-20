@@ -1,6 +1,7 @@
 """ This module contains an implementation of a Vantage Point-tree (VP-tree)."""
 import numpy as np
 import statistics
+import math
 
 
 class VPTree:
@@ -26,9 +27,9 @@ class VPTree:
     def __init__(self, points, dist_fn):
         self.left = None
         self.right = None
-        self.left_min = np.inf
+        self.left_min = math.inf
         self.left_max = 0
-        self.right_min = np.inf
+        self.right_min = math.inf
         self.right_max = 0
         self.dist_fn = dist_fn
 
@@ -109,7 +110,7 @@ class VPTree:
         neighbors = _AutoSortingList(max_size=n_neighbors)
         nodes_to_visit = [(self, 0)]
 
-        furthest_d = np.inf
+        furthest_d = math.inf
 
         while len(nodes_to_visit) > 0:
             node, d0 = nodes_to_visit.pop(0)
