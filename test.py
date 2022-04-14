@@ -24,6 +24,7 @@ class TestVPTree(unittest.TestCase):
 
         for k in (1, 10, len(points)):
             tree_nearest = tree.get_n_nearest_neighbors(query, k)
+            self.assertEqual(len(tree_nearest), k)
             brute_force_nearest = brute_force[:k]
             for nearest, bf_nearest in zip(tree_nearest, brute_force_nearest):
                 self.assertEqual(nearest[0], bf_nearest[0])
