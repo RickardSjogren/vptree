@@ -1,4 +1,5 @@
 """ This module contains an implementation of a Vantage Point-tree (VP-tree)."""
+import bisect
 import collections
 import numpy as np
 
@@ -208,15 +209,14 @@ class _AutoSortingList(list):
         self.max_size = max_size
 
     def append(self, item):
-        """ Append `item` and sort.
+        """ insert `item` in sorted order
 
         Parameters
         ----------
         item : Any
             Input item.
         """
-        super(_AutoSortingList, self).append(item)
-        self.sort(key=lambda x: x[0])
+        self.insert(bisect.bisect_left(self, item), item)
         if self.max_size is not None and len(self) > self.max_size:
             self.pop()
 
