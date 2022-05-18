@@ -1,4 +1,6 @@
 """ This module contains an implementation of a Vantage Point-tree (VP-tree)."""
+import bisect
+import collections
 import numpy as np
 
 
@@ -106,36 +108,35 @@ class VPTree:
         if not isinstance(n_neighbors, int) or n_neighbors < 1:
             raise ValueError('n_neighbors must be strictly positive integer')
         neighbors = _AutoSortingList(max_size=n_neighbors)
-        nodes_to_visit = [(self, 0)]
-
+        queue = collections.deque([self])
         furthest_d = np.inf
+        need_neighbors = True
 
-        while len(nodes_to_visit) > 0:
-            node, d0 = nodes_to_visit.pop(0)
-            if node is None or d0 > furthest_d:
+        while queue:
+            node = queue.popleft()
+            if node is None:
                 continue
-
             d = self.dist_fn(query, node.vp)
-            if d < furthest_d:
+
+            if d < furthest_d or need_neighbors:
                 neighbors.append((d, node.vp))
-                furthest_d, _ = neighbors[-1]
+                furthest_d = neighbors[-1][0]
+                if need_neighbors:
+                    need_neighbors = len(neighbors) < n_neighbors
 
             if node._is_leaf():
                 continue
 
-            if node.left_min <= d <= node.left_max:
-                nodes_to_visit.insert(0, (node.left, 0))
-            elif node.left_min - furthest_d <= d <= node.left_max + furthest_d:
-                nodes_to_visit.append((node.left,
-                                       node.left_min - d if d < node.left_min
-                                       else d - node.left_max))
-
-            if node.right_min <= d <= node.right_max:
-                nodes_to_visit.insert(0, (node.right, 0))
-            elif node.right_min - furthest_d <= d <= node.right_max + furthest_d:
-                nodes_to_visit.append((node.right,
-                                       node.right_min - d if d < node.right_min
-                                       else d - node.right_max))
+            if need_neighbors:
+                if d < node.left_max + furthest_d:
+                    queue.append(node.left)
+                if d >= node.right_min - furthest_d:
+                    queue.append(node.right)
+            else:
+                if node.left_min - furthest_d < d < node.left_max + furthest_d:
+                    queue.append(node.left)
+                if node.right_min - furthest_d <= d <= node.right_max + furthest_d:
+                    queue.append(node.right)
 
         return list(neighbors)
 
@@ -208,15 +209,14 @@ class _AutoSortingList(list):
         self.max_size = max_size
 
     def append(self, item):
-        """ Append `item` and sort.
+        """ insert `item` in sorted order
 
         Parameters
         ----------
         item : Any
             Input item.
         """
-        super(_AutoSortingList, self).append(item)
-        self.sort(key=lambda x: x[0])
+        self.insert(bisect.bisect_left(self, item), item)
         if self.max_size is not None and len(self) > self.max_size:
             self.pop()
 
