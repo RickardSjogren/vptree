@@ -1,7 +1,8 @@
 """ This module contains an implementation of a Vantage Point-tree (VP-tree)."""
 import bisect
 import collections
-import numpy as np
+import math
+import statistics as stats
 
 
 class VPTree:
@@ -27,9 +28,9 @@ class VPTree:
     def __init__(self, points, dist_fn):
         self.left = None
         self.right = None
-        self.left_min = np.inf
+        self.left_min = math.inf
         self.left_max = 0
-        self.right_min = np.inf
+        self.right_min = math.inf
         self.right_max = 0
         self.dist_fn = dist_fn
 
@@ -37,16 +38,15 @@ class VPTree:
             raise ValueError('Points can not be empty.')
 
         # Vantage point is point furthest from parent vp.
-        vp_i = 0
-        self.vp = points[vp_i]
-        points = np.delete(points, vp_i, axis=0)
+        self.vp = points[0]
+        points = points[1:]
 
         if len(points) == 0:
             return
 
         # Choose division boundary at median of distances.
         distances = [self.dist_fn(self.vp, p) for p in points]
-        median = np.median(distances)
+        median = stats.median(distances)
 
         left_points = []
         right_points = []
@@ -109,7 +109,7 @@ class VPTree:
             raise ValueError('n_neighbors must be strictly positive integer')
         neighbors = _AutoSortingList(max_size=n_neighbors)
         queue = collections.deque([self])
-        furthest_d = np.inf
+        furthest_d = math.inf
         need_neighbors = True
 
         while queue:
