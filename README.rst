@@ -4,8 +4,8 @@ VP-Tree
 .. image:: https://badge.fury.io/py/vptree.svg
     :target: https://badge.fury.io/py/vptree
 
-.. image:: https://app.travis-ci.com/RickardSjogren/vptree.svg?branch=master
-    :target: https://app.travis-ci.com/RickardSjogren/vptree
+.. image:: https://github.com/RickardSjogren/vptree/actions/workflows/python-package.yml/badge.svg?branch=master
+    :target: https://github.com/RickardSjogren/vptree/actions/workflows/python-package.yml
 
 This package contains an implementation of a `vantage-point tree <https://en.wikipedia.org/wiki/Vantage-point_tree>`_ data structure.
 
