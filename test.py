@@ -53,6 +53,23 @@ class TestVPTree(unittest.TestCase):
         tree = vptree.VPTree([1, 2, 3], euclidean)
         self.assertRaises(ValueError, tree.get_n_nearest_neighbors, [1], 0)
 
+    def test_custom_points(self):
+        points = [
+            CustomPoint(0),
+            CustomPoint(1),
+            CustomPoint(2)
+        ]
+
+        tree = vptree.VPTree(points, custom_point_distance)
+
+        test_point = CustomPoint(1)
+        neighbors = tree.get_n_nearest_neighbors(test_point, 3)
+
+        self.assertTrue(np.isclose(neighbors[0][0], 0))
+        self.assertTrue(np.isclose(neighbors[0][1].x, 1))
+        self.assertTrue(np.isclose(neighbors[1][0], 1))
+        self.assertTrue(np.isclose(neighbors[2][0], 1))
+
 
 def euclidean(p1, p2):
     return np.sqrt(np.sum(np.power(p2 - p1, 2)))
@@ -64,6 +81,15 @@ def brute_force_solution(n, dim, query, dist=euclidean):
     brute_force.sort()
 
     return points, brute_force
+
+
+class CustomPoint:
+    def __init__(self, x: int):
+        self.x = x
+
+
+def custom_point_distance(cp_1: CustomPoint, cp_2: CustomPoint) -> float:
+    return np.abs(cp_1.x - cp_2.x)
 
 
 if __name__ == '__main__':
