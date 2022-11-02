@@ -3,6 +3,7 @@ import bisect
 import collections
 import math
 import statistics as stats
+from functools import total_ordering
 
 
 class VPTree:
@@ -119,8 +120,8 @@ class VPTree:
             d = self.dist_fn(query, node.vp)
 
             if d < furthest_d or need_neighbors:
-                neighbors.append((d, node.vp))
-                furthest_d = neighbors[-1][0]
+                neighbors.append(_DistanceNodePair(d, node.vp))
+                furthest_d = neighbors[-1].distance
                 if need_neighbors:
                     need_neighbors = len(neighbors) < n_neighbors
 
@@ -138,7 +139,7 @@ class VPTree:
                 if node.right_min - furthest_d <= d <= node.right_max + furthest_d:
                     queue.append(node.right)
 
-        return list(neighbors)
+        return [(x.distance, x.node) for x in neighbors]
 
     def get_all_in_range(self, query, max_distance):
         """ Find all neighbours within `max_distance`.
@@ -169,7 +170,7 @@ class VPTree:
 
             d = self.dist_fn(query, node.vp)
             if d < max_distance:
-                neighbors.append((d, node.vp))
+                neighbors.append(_DistanceNodePair(d, node.vp))
 
             if node._is_leaf():
                 continue
@@ -188,7 +189,31 @@ class VPTree:
                                        node.right_min - d if d < node.right_min
                                        else d - node.right_max))
 
-        return neighbors
+        return [(x.distance, x.node) for x in neighbors]
+
+
+@total_ordering
+class _DistanceNodePair:
+    """ Container for distance and node 
+    with overloaded comparison.
+
+    _AutoSortingList elements should be members of _DistanceNodePair
+    to avoid unexpected node comparison in case of distance equality.
+
+    Parameters
+    ---------
+    distance : Number
+    node : VPTree
+    """
+    def __init__(self, distance, node):
+        self.distance = distance
+        self.node = node
+
+    def __eq__(self, other):
+        return self.distance == other.distance
+
+    def __lt__(self, other):
+        return self.distance < other.distance
 
 
 class _AutoSortingList(list):
@@ -219,4 +244,3 @@ class _AutoSortingList(list):
         self.insert(bisect.bisect_left(self, item), item)
         if self.max_size is not None and len(self) > self.max_size:
             self.pop()
-
